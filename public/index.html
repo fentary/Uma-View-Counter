@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gerador de Contador</title>
+<style>
+  :root {
+    --bg: #17141f;
+    --panel: #211c2e;
+    --panel-border: #34293f;
+    --text: #f1e9f7;
+    --muted: #a495b3;
+    --accent: #ff6fb0;
+    --accent-2: #6fd6ff;
+    --mono-bg: #120f1a;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(255,111,176,0.08), transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(111,214,255,0.08), transparent 40%);
+    color: var(--text);
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .card {
+    width: 100%;
+    max-width: 560px;
+    background: var(--panel);
+    border: 1px solid var(--panel-border);
+    border-radius: 20px;
+    padding: 36px 32px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+
+  .eyebrow {
+    text-transform: uppercase;
+    letter-spacing: 0.14em;
+    font-size: 12px;
+    color: var(--accent-2);
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  h1 {
+    font-size: 28px;
+    margin: 0 0 6px 0;
+    letter-spacing: -0.01em;
+  }
+
+  p.sub {
+    color: var(--muted);
+    margin: 0 0 28px 0;
+    line-height: 1.5;
+    font-size: 14px;
+  }
+
+  label {
+    display: block;
+    font-size: 13px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .input-row {
+    display: flex;
+    gap: 10px;
+  }
+
+  input[type="text"] {
+    flex: 1;
+    background: var(--mono-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 10px;
+    padding: 12px 14px;
+    color: var(--text);
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.15s ease;
+  }
+
+  input[type="text"]:focus {
+    border-color: var(--accent);
+  }
+
+  button {
+    background: var(--accent);
+    color: #1a0e14;
+    border: none;
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-weight: 700;
+    font-size: 14px;
+    cursor: pointer;
+    transition: transform 0.1s ease, opacity 0.15s ease;
+  }
+
+  button:hover { opacity: 0.9; }
+  button:active { transform: scale(0.97); }
+
+  .preview {
+    margin-top: 24px;
+    min-height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--mono-bg);
+    border-radius: 12px;
+    border: 1px dashed var(--panel-border);
+  }
+
+  .preview img {
+    height: 80px;
+    image-rendering: pixelated;
+  }
+
+  .preview .placeholder {
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  .result {
+    margin-top: 20px;
+    display: none;
+  }
+
+  .result.show { display: block; }
+
+  .field {
+    margin-top: 14px;
+  }
+
+  .field-label {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .copy-btn {
+    background: transparent;
+    border: 1px solid var(--panel-border);
+    color: var(--accent-2);
+    font-size: 11px;
+    padding: 4px 10px;
+    border-radius: 6px;
+  }
+
+  code.box {
+    display: block;
+    background: var(--mono-bg);
+    border: 1px solid var(--panel-border);
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 12.5px;
+    color: var(--accent-2);
+    word-break: break-all;
+    font-family: 'Consolas', 'Courier New', monospace;
+  }
+
+  .note {
+    margin-top: 24px;
+    font-size: 12px;
+    color: var(--muted);
+    line-height: 1.6;
+    border-top: 1px solid var(--panel-border);
+    padding-top: 16px;
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="eyebrow">Contador de visualizações</div>
+  <h1>Gere o seu contador</h1>
+  <p class="sub">Escolha um nome único (pode ser o nome do seu perfil, projeto etc). Toda vez que alguém carregar a imagem, o número sobe +1.</p>
+
+  <label for="nameInput">Nome do contador</label>
+  <div class="input-row">
+    <input type="text" id="nameInput" placeholder="ex: meu-perfil" maxlength="64">
+    <button onclick="gerar()">Gerar</button>
+  </div>
+
+  <div class="preview" id="preview">
+    <span class="placeholder">A prévia aparece aqui</span>
+  </div>
+
+  <div class="result" id="result">
+    <div class="field">
+      <div class="field-label">
+        <span>URL da imagem</span>
+        <button class="copy-btn" onclick="copiar('urlBox')">copiar</button>
+      </div>
+      <code class="box" id="urlBox"></code>
+    </div>
+
+    <div class="field">
+      <div class="field-label">
+        <span>Tag HTML (img)</span>
+        <button class="copy-btn" onclick="copiar('htmlBox')">copiar</button>
+      </div>
+      <code class="box" id="htmlBox"></code>
+    </div>
+
+    <div class="field">
+      <div class="field-label">
+        <span>Markdown</span>
+        <button class="copy-btn" onclick="copiar('mdBox')">copiar</button>
+      </div>
+      <code class="box" id="mdBox"></code>
+    </div>
+  </div>
+
+  <div class="note">
+    A prévia acima <strong>não conta</strong> como visualização — ela usa o modo <code>/preview</code>. O contador só sobe de verdade quando a URL final é carregada em outro lugar (seu README, seu perfil, etc). Não use nomes com informação pessoal, pois qualquer pessoa com o link pode ver a contagem.
+  </div>
+</div>
+
+<script>
+  function sanitize(name) {
+    return name.trim().replace(/[^a-zA-Z0-9_-]/g, "");
+  }
+
+  async function gerar() {
+    const raw = document.getElementById("nameInput").value;
+    const name = sanitize(raw);
+    const preview = document.getElementById("preview");
+    const result = document.getElementById("result");
+
+    if (!name) {
+      preview.innerHTML = '<span class="placeholder">Digite um nome válido (letras, números, - e _)</span>';
+      result.classList.remove("show");
+      return;
+    }
+
+    const base = window.location.origin;
+    const finalUrl = `${base}/count/${name}`;
+    const previewUrl = `${base}/count/${name}/preview`;
+
+    preview.innerHTML = `<img src="${previewUrl}?t=${Date.now()}" alt="prévia">`;
+
+    document.getElementById("urlBox").textContent = finalUrl;
+    document.getElementById("htmlBox").textContent = `<img src="${finalUrl}" alt="${name}" />`;
+    document.getElementById("mdBox").textContent = `![${name}](${finalUrl})`;
+
+    result.classList.add("show");
+  }
+
+  function copiar(id) {
+    const text = document.getElementById(id).textContent;
+    navigator.clipboard.writeText(text);
+  }
+
+  document.getElementById("nameInput").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") gerar();
+  });
+</script>
+
+</body>
+</html>

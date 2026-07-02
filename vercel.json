@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    { "source": "/count/:name/preview", "destination": "/api/count/:name/preview" },
+    { "source": "/count/:name/raw", "destination": "/api/count/:name/raw" },
+    { "source": "/count/:name", "destination": "/api/count/:name" }
+  ],
+  "functions": {
+    "api/**/*.js": {
+      "includeFiles": "digits/**"
+    }
+  }
+}
