@@ -17,7 +17,7 @@ module.exports = async (req, res) => {
   const newCount = await redis.incr(`counter:${name}`);
   const pngBuffer = await buildCounterImage(newCount);
 
-  res.setHeader("Content-Type", "image/png");
+  res.setHeader("Content-Type", "image/gif");
   res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
   res.status(200).send(pngBuffer);
 };
