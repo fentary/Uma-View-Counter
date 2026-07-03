@@ -6,7 +6,8 @@
   ],
   "functions": {
     "api/**/*.js": {
-      "includeFiles": "digits/**"
+      "includeFiles": "digits/**",
+      "maxDuration": 30
     }
   }
 }
