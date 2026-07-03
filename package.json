@@ -3,7 +3,8 @@
   "version": "2.0.0",
   "description": "Contador de visualizacoes com imagens, guardado no Upstash Redis (nunca zera)",
   "dependencies": {
-    "@upstash/redis": "latest"
+    "@upstash/redis": "latest",
+    "sharp": "^0.35.3"
   },
   "engines": {
     "node": ">=18"

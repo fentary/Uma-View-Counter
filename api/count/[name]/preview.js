@@ -1,22 +1,22 @@
 // api/count/[name]/preview.js
-// GET /count/SEUNOME/preview
-// Mostra o número atual SEM incrementar. Útil pra testar o link.
+// GET /count/YOURNAME/preview
+// Shows the current number WITHOUT incrementing it. Useful for testing.
 
 const { redis } = require("../../../lib/redis");
-const { buildCounterSVG, isValidName } = require("../../../lib/digits");
+const { buildCounterImage, isValidName } = require("../../../lib/digits");
 
 module.exports = async (req, res) => {
   const { name } = req.query;
 
   if (!isValidName(name)) {
-    res.status(400).send("Nome inválido. Use apenas letras, números, - e _.");
+    res.status(400).send("Invalid name. Use only letters, numbers, - and _.");
     return;
   }
 
   const current = (await redis.get(`counter:${name}`)) || 0;
-  const svg = buildCounterSVG(String(current));
+  const pngBuffer = await buildCounterImage(current);
 
-  res.setHeader("Content-Type", "image/svg+xml");
+  res.setHeader("Content-Type", "image/png");
   res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-  res.status(200).send(svg);
+  res.status(200).send(pngBuffer);
 };

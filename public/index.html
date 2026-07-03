@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gerador de Contador</title>
+<title>View Counter Generator</title>
 <style>
   :root {
     --bg: #17141f;
@@ -117,6 +117,7 @@
     background: var(--mono-bg);
     border-radius: 12px;
     border: 1px dashed var(--panel-border);
+    overflow-x: auto;
   }
 
   .preview img {
@@ -178,38 +179,44 @@
     border-top: 1px solid var(--panel-border);
     padding-top: 16px;
   }
+
+  .note code {
+    background: var(--mono-bg);
+    padding: 1px 5px;
+    border-radius: 4px;
+  }
 </style>
 </head>
 <body>
 
 <div class="card">
-  <div class="eyebrow">Contador de visualizações</div>
-  <h1>Gere o seu contador</h1>
-  <p class="sub">Escolha um nome único (pode ser o nome do seu perfil, projeto etc). Toda vez que alguém carregar a imagem, o número sobe +1.</p>
+  <div class="eyebrow">View Counter</div>
+  <h1>Generate your counter</h1>
+  <p class="sub">Pick a unique name (your profile name, project name, anything). Every time someone loads the image, the number goes up by 1.</p>
 
-  <label for="nameInput">Nome do contador</label>
+  <label for="nameInput">Counter name</label>
   <div class="input-row">
-    <input type="text" id="nameInput" placeholder="ex: meu-perfil" maxlength="64">
-    <button onclick="gerar()">Gerar</button>
+    <input type="text" id="nameInput" placeholder="e.g. my-profile" maxlength="64">
+    <button onclick="generate()">Generate</button>
   </div>
 
   <div class="preview" id="preview">
-    <span class="placeholder">A prévia aparece aqui</span>
+    <span class="placeholder">Your preview will show up here</span>
   </div>
 
   <div class="result" id="result">
     <div class="field">
       <div class="field-label">
-        <span>URL da imagem</span>
-        <button class="copy-btn" onclick="copiar('urlBox')">copiar</button>
+        <span>Image URL</span>
+        <button class="copy-btn" onclick="copyText('urlBox')">copy</button>
       </div>
       <code class="box" id="urlBox"></code>
     </div>
 
     <div class="field">
       <div class="field-label">
-        <span>Tag HTML (img)</span>
-        <button class="copy-btn" onclick="copiar('htmlBox')">copiar</button>
+        <span>HTML img tag</span>
+        <button class="copy-btn" onclick="copyText('htmlBox')">copy</button>
       </div>
       <code class="box" id="htmlBox"></code>
     </div>
@@ -217,14 +224,22 @@
     <div class="field">
       <div class="field-label">
         <span>Markdown</span>
-        <button class="copy-btn" onclick="copiar('mdBox')">copiar</button>
+        <button class="copy-btn" onclick="copyText('mdBox')">copy</button>
       </div>
       <code class="box" id="mdBox"></code>
+    </div>
+
+    <div class="field">
+      <div class="field-label">
+        <span>BBCode (forums, osu! profile, etc.)</span>
+        <button class="copy-btn" onclick="copyText('bbBox')">copy</button>
+      </div>
+      <code class="box" id="bbBox"></code>
     </div>
   </div>
 
   <div class="note">
-    A prévia acima <strong>não conta</strong> como visualização — ela usa o modo <code>/preview</code>. O contador só sobe de verdade quando a URL final é carregada em outro lugar (seu README, seu perfil, etc). Não use nomes com informação pessoal, pois qualquer pessoa com o link pode ver a contagem.
+    The preview above does <strong>not</strong> count as a real view — it uses the <code>/preview</code> mode. The counter only goes up for real once the final URL is loaded somewhere else (your README, your profile, etc). Don't use names that contain personal information, since anyone with the link can see the count.
   </div>
 </div>
 
@@ -233,14 +248,14 @@
     return name.trim().replace(/[^a-zA-Z0-9_-]/g, "");
   }
 
-  async function gerar() {
+  async function generate() {
     const raw = document.getElementById("nameInput").value;
     const name = sanitize(raw);
     const preview = document.getElementById("preview");
     const result = document.getElementById("result");
 
     if (!name) {
-      preview.innerHTML = '<span class="placeholder">Digite um nome válido (letras, números, - e _)</span>';
+      preview.innerHTML = '<span class="placeholder">Type a valid name (letters, numbers, - and _)</span>';
       result.classList.remove("show");
       return;
     }
@@ -249,22 +264,23 @@
     const finalUrl = `${base}/count/${name}`;
     const previewUrl = `${base}/count/${name}/preview`;
 
-    preview.innerHTML = `<img src="${previewUrl}?t=${Date.now()}" alt="prévia">`;
+    preview.innerHTML = `<img src="${previewUrl}?t=${Date.now()}" alt="preview">`;
 
     document.getElementById("urlBox").textContent = finalUrl;
     document.getElementById("htmlBox").textContent = `<img src="${finalUrl}" alt="${name}" />`;
     document.getElementById("mdBox").textContent = `![${name}](${finalUrl})`;
+    document.getElementById("bbBox").textContent = `[img]${finalUrl}[/img]`;
 
     result.classList.add("show");
   }
 
-  function copiar(id) {
+  function copyText(id) {
     const text = document.getElementById(id).textContent;
     navigator.clipboard.writeText(text);
   }
 
   document.getElementById("nameInput").addEventListener("keydown", (e) => {
-    if (e.key === "Enter") gerar();
+    if (e.key === "Enter") generate();
   });
 </script>
 

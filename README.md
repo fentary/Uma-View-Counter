@@ -1,75 +1,89 @@
-# Meu View Counter (v2 — nunca zera)
+# View Counter (Upstash Redis edition)
 
-Contador de visualizações com imagens. Diferente da primeira versão, agora os
-números ficam guardados no **Upstash Redis**, um banco de dados separado do
-servidor — então mesmo que o site "durma" ou você faça um novo deploy, o
-contador continua exatamente de onde parou.
+A view counter with cute character images, similar to "Moe Counter". Counts
+are stored in Upstash Redis, so they persist forever — even if the site
+sleeps or you redeploy, nothing resets.
 
-## Passo a passo completo
+Counters always show **10 digits** with leading zeros (e.g. `0000000007`).
+Images are served as real **PNG** files (not SVG), so they work everywhere,
+including places that block SVG for security reasons — like osu!'s profile
+BBCode editor.
 
-### 1. Suba o projeto para o GitHub
+## Full setup, step by step
 
-- Crie um repositório novo em https://github.com/new
-- Envie todos os arquivos desta pasta pra ele (pelo site mesmo, arrastando os
-  arquivos em "uploading an existing file")
+### 1. Push this project to GitHub
 
-### 2. Crie o projeto no Vercel
+- Create a new repository at https://github.com/new
+- Upload every file from this folder to it
 
-1. Acesse https://vercel.com e entre com sua conta do GitHub
-2. Clique em "Add New..." → "Project"
-3. Selecione o repositório que você acabou de criar
-4. Pode deixar todas as configurações no padrão e clicar em "Deploy"
-   - O primeiro deploy pode até dar erro (porque ainda falta o banco de
-     dados) — sem problema, a gente resolve no próximo passo
+### 2. Create the project on Vercel
 
-### 3. Conecte o banco de dados (Upstash Redis)
+1. Go to https://vercel.com and sign in with GitHub
+2. Click **Add New...** → **Project**
+3. Import the repository you just created
+4. Leave the default settings and click **Deploy**
+   (the first deploy may fail — that's expected, we still need step 3)
 
-1. Dentro do seu projeto no Vercel, clique na aba **Storage**
-2. Clique em **Create Database** (ou "Browse Marketplace" → procure por
-   **Upstash**)
-3. Escolha **Redis**
-4. Dê um nome pra ele (qualquer nome, ex: `contador-db`) e escolha a região
-   mais próxima de você
-5. Clique em **Connect** / **Create** e confirme que ele deve se conectar ao
-   seu projeto (o Vercel vai perguntar quais projetos usam esse banco —
-   selecione o seu)
+### 3. Connect the database (Upstash Redis)
 
-Isso faz o Vercel criar automaticamente duas variáveis de ambiente no seu
-projeto: `UPSTASH_REDIS_REST_URL` e `UPSTASH_REDIS_REST_TOKEN`. É assim que o
-código sabe onde guardar os números — você não precisa copiar nada
-manualmente.
+1. Inside your Vercel project, open the **Storage** tab
+2. Click **Create Database** (or **Browse Marketplace**)
+3. Choose **Upstash** → **Redis**
+4. Pick any name and the region closest to your users
+5. Confirm, and make sure it's connected to your project
 
-### 4. Faça o deploy de novo
+Vercel automatically creates two environment variables for you:
+`UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`. You don't need to
+copy anything manually.
 
-1. Vá na aba **Deployments**
-2. Clique nos "..." do último deploy → **Redeploy**
-   (agora que o banco está conectado, vai funcionar)
+### 4. Redeploy
 
-### 5. Use!
+1. Go to the **Deployments** tab
+2. Click the **...** menu next to the latest deployment → **Redeploy**
 
-Acesse a URL que o Vercel te deu (tipo `https://seu-projeto.vercel.app`) —
-vai abrir a página pra gerar seu link do contador. Cada link gerado é
-independente: se você e um amigo criarem nomes diferentes, cada um tem sua
-própria contagem, guardada para sempre.
+### 5. Use it
 
-## E se eu quiser testar no meu computador antes?
+Open the URL Vercel gave you (e.g. `https://your-project.vercel.app`). Type
+a name, click **Generate**, and you'll get:
+- a plain image URL
+- an HTML `<img>` tag
+- a Markdown snippet
+- a **BBCode** snippet (for forums, osu! profile, etc.)
 
-Você vai precisar:
-1. Ter o Node.js instalado
-2. Criar uma conta grátis em https://upstash.com e criar um banco Redis lá
-   diretamente (em vez de pelo Vercel)
-3. Copiar a "REST URL" e o "REST TOKEN" que o Upstash mostra
-4. Criar um arquivo `.env.local` nesta pasta com:
+## Using it on your osu! profile
+
+1. Go to your profile → **Edit** (you need osu!supporter for this)
+2. In the `me!` section editor, click the **Image** button in the BBCode
+   toolbar (or type it manually)
+3. Paste your counter's URL between the tags:
    ```
-   UPSTASH_REDIS_REST_URL=cole_aqui
-   UPSTASH_REDIS_REST_TOKEN=cole_aqui
+   [img]https://your-project.vercel.app/count/your-name[/img]
    ```
-5. Instalar a ferramenta do Vercel e rodar localmente:
-   ```
-   npm install -g vercel
-   npm install
-   vercel dev
-   ```
+4. Save
 
-Isso é opcional — o mais simples mesmo é ir direto pros passos 1 a 5 acima e
-testar já no ar.
+## Routes
+
+- `GET /count/:name` — increments the counter and returns the PNG image
+- `GET /count/:name/preview` — returns the current image **without**
+  incrementing (useful for testing)
+- `GET /count/:name/raw` — returns the raw number as JSON, e.g.
+  `{"name":"your-name","count":42}`
+
+## Testing locally (optional)
+
+You'll need Node.js and an Upstash account (free) with a Redis database
+created directly on https://upstash.com. Copy the REST URL and REST TOKEN
+into a `.env.local` file:
+
+```
+UPSTASH_REDIS_REST_URL=paste_here
+UPSTASH_REDIS_REST_TOKEN=paste_here
+```
+
+Then:
+
+```
+npm install -g vercel
+npm install
+vercel dev
+```
