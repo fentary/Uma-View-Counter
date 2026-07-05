@@ -185,65 +185,180 @@
     padding: 1px 5px;
     border-radius: 4px;
   }
+
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+  }
+
+  .tab-btn {
+    flex: 1;
+    background: var(--mono-bg);
+    color: var(--muted);
+    border: 1px solid var(--panel-border);
+    border-radius: 10px;
+    padding: 10px;
+    font-weight: 600;
+    font-size: 13px;
+  }
+
+  .tab-btn.active {
+    background: var(--accent);
+    color: #1a0e14;
+  }
+
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  .mode-row {
+    display: flex;
+    gap: 8px;
+  }
+
+  .mode-btn {
+    flex: 1;
+    background: var(--mono-bg);
+    color: var(--muted);
+    border: 1px solid var(--panel-border);
+    border-radius: 10px;
+    padding: 10px 6px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .mode-btn.active {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(255, 111, 176, 0.08);
+  }
 </style>
 </head>
 <body>
 
 <div class="card">
-  <div class="eyebrow">View Counter</div>
-  <h1>Generate your counter</h1>
-  <p class="sub">Pick a unique name (your profile name, project name, anything). Every time someone loads the image, the number goes up by 1.</p>
-
-  <label for="nameInput">Counter name</label>
-  <div class="input-row">
-    <input type="text" id="nameInput" placeholder="e.g. my-profile" maxlength="64">
-    <button onclick="generate()">Generate</button>
+  <div class="tabs">
+    <button class="tab-btn active" id="tabViewBtn" onclick="switchTab('view')">View Counter</button>
+    <button class="tab-btn" id="tabRankBtn" onclick="switchTab('rank')">Rank Counter</button>
   </div>
 
-  <div class="preview" id="preview">
-    <span class="placeholder">Your preview will show up here</span>
+  <div class="panel active" id="viewPanel">
+    <div class="eyebrow">View Counter</div>
+    <h1>Generate your counter</h1>
+    <p class="sub">Pick a unique name (your profile name, project name, anything). Every time someone loads the image, the number goes up by 1.</p>
+
+    <label for="nameInput">Counter name</label>
+    <div class="input-row">
+      <input type="text" id="nameInput" placeholder="e.g. my-profile" maxlength="64">
+      <button onclick="generate()">Generate</button>
+    </div>
+
+    <div class="preview" id="preview">
+      <span class="placeholder">Your preview will show up here</span>
+    </div>
+
+    <div class="result" id="result">
+      <div class="field">
+        <div class="field-label">
+          <span>Image URL</span>
+          <button class="copy-btn" onclick="copyText('urlBox')">copy</button>
+        </div>
+        <code class="box" id="urlBox"></code>
+      </div>
+
+      <div class="field">
+        <div class="field-label">
+          <span>HTML img tag</span>
+          <button class="copy-btn" onclick="copyText('htmlBox')">copy</button>
+        </div>
+        <code class="box" id="htmlBox"></code>
+      </div>
+
+      <div class="field">
+        <div class="field-label">
+          <span>Markdown</span>
+          <button class="copy-btn" onclick="copyText('mdBox')">copy</button>
+        </div>
+        <code class="box" id="mdBox"></code>
+      </div>
+
+      <div class="field">
+        <div class="field-label">
+          <span>BBCode (forums, osu! profile, etc.)</span>
+          <button class="copy-btn" onclick="copyText('bbBox')">copy</button>
+        </div>
+        <code class="box" id="bbBox"></code>
+      </div>
+    </div>
+
+    <div class="note">
+      The preview above does <strong>not</strong> count as a real view — it uses the <code>/preview</code> mode. The counter only goes up for real once the final URL is loaded somewhere else (your README, your profile, etc). Don't use names that contain personal information, since anyone with the link can see the count.
+    </div>
   </div>
 
-  <div class="result" id="result">
-    <div class="field">
-      <div class="field-label">
-        <span>Image URL</span>
-        <button class="copy-btn" onclick="copyText('urlBox')">copy</button>
-      </div>
-      <code class="box" id="urlBox"></code>
+  <div class="panel" id="rankPanel">
+    <div class="eyebrow">Rank Counter</div>
+    <h1>Generate your rank badge</h1>
+    <p class="sub">Type your osu! username, pick your game mode, and get an image showing your current global rank.</p>
+
+    <label for="rankInput">osu! username</label>
+    <div class="input-row">
+      <input type="text" id="rankInput" placeholder="e.g. fentary" maxlength="32">
+      <button onclick="generateRank()">Generate</button>
     </div>
 
-    <div class="field">
-      <div class="field-label">
-        <span>HTML img tag</span>
-        <button class="copy-btn" onclick="copyText('htmlBox')">copy</button>
-      </div>
-      <code class="box" id="htmlBox"></code>
+    <label style="margin-top:16px;">Game mode</label>
+    <div class="mode-row" id="modeRow">
+      <button class="mode-btn active" data-mode="osu">std</button>
+      <button class="mode-btn" data-mode="taiko">taiko</button>
+      <button class="mode-btn" data-mode="catch">catch</button>
+      <button class="mode-btn" data-mode="mania">mania</button>
     </div>
 
-    <div class="field">
-      <div class="field-label">
-        <span>Markdown</span>
-        <button class="copy-btn" onclick="copyText('mdBox')">copy</button>
-      </div>
-      <code class="box" id="mdBox"></code>
+    <div class="preview" id="rankPreview" style="margin-top:24px;">
+      <span class="placeholder">Your preview will show up here</span>
     </div>
 
-    <div class="field">
-      <div class="field-label">
-        <span>BBCode (forums, osu! profile, etc.)</span>
-        <button class="copy-btn" onclick="copyText('bbBox')">copy</button>
+    <div class="result" id="rankResult">
+      <div class="field">
+        <div class="field-label">
+          <span>Image URL</span>
+          <button class="copy-btn" onclick="copyText('rankUrlBox')">copy</button>
+        </div>
+        <code class="box" id="rankUrlBox"></code>
       </div>
-      <code class="box" id="bbBox"></code>
-    </div>
-  </div>
 
-  <div class="note">
-    The preview above does <strong>not</strong> count as a real view — it uses the <code>/preview</code> mode. The counter only goes up for real once the final URL is loaded somewhere else (your README, your profile, etc). Don't use names that contain personal information, since anyone with the link can see the count.
+      <div class="field">
+        <div class="field-label">
+          <span>HTML img tag</span>
+          <button class="copy-btn" onclick="copyText('rankHtmlBox')">copy</button>
+        </div>
+        <code class="box" id="rankHtmlBox"></code>
+      </div>
+
+      <div class="field">
+        <div class="field-label">
+          <span>BBCode (forums, osu! profile, etc.)</span>
+          <button class="copy-btn" onclick="copyText('rankBbBox')">copy</button>
+        </div>
+        <code class="box" id="rankBbBox"></code>
+      </div>
+    </div>
+
+    <div class="note">
+      Ranks are refreshed at most once every few hours (not on every single view) - this keeps things fast and avoids overloading the osu! API. If a player has no rank yet in the chosen mode (or doesn't exist), it'll show <code>0</code>.
+    </div>
   </div>
 </div>
 
 <script>
+  function switchTab(tab) {
+    document.getElementById('tabViewBtn').classList.toggle('active', tab === 'view');
+    document.getElementById('tabRankBtn').classList.toggle('active', tab === 'rank');
+    document.getElementById('viewPanel').classList.toggle('active', tab === 'view');
+    document.getElementById('rankPanel').classList.toggle('active', tab === 'rank');
+  }
+
   function sanitize(name) {
     return name.trim().replace(/[^a-zA-Z0-9_-]/g, "");
   }
@@ -281,6 +396,47 @@
 
   document.getElementById("nameInput").addEventListener("keydown", (e) => {
     if (e.key === "Enter") generate();
+  });
+
+  let selectedMode = 'osu';
+  document.getElementById('modeRow').addEventListener('click', (e) => {
+    const btn = e.target.closest('.mode-btn');
+    if (!btn) return;
+    document.querySelectorAll('.mode-btn').forEach((b) => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedMode = btn.dataset.mode;
+  });
+
+  function sanitizeUsername(name) {
+    return name.trim().replace(/[\/\\]/g, "");
+  }
+
+  async function generateRank() {
+    const raw = document.getElementById("rankInput").value;
+    const username = sanitizeUsername(raw);
+    const preview = document.getElementById("rankPreview");
+    const result = document.getElementById("rankResult");
+
+    if (!username) {
+      preview.innerHTML = '<span class="placeholder">Type your osu! username</span>';
+      result.classList.remove("show");
+      return;
+    }
+
+    const base = window.location.origin;
+    const finalUrl = `${base}/rank/${encodeURIComponent(username)}?mode=${selectedMode}`;
+
+    preview.innerHTML = `<img src="${finalUrl}&t=${Date.now()}" alt="preview">`;
+
+    document.getElementById("rankUrlBox").textContent = finalUrl;
+    document.getElementById("rankHtmlBox").textContent = `<img src="${finalUrl}" alt="${username} rank" />`;
+    document.getElementById("rankBbBox").textContent = `[img]${finalUrl}[/img]`;
+
+    result.classList.add("show");
+  }
+
+  document.getElementById("rankInput").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") generateRank();
   });
 </script>
 

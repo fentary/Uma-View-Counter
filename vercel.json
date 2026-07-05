@@ -2,7 +2,8 @@
   "rewrites": [
     { "source": "/count/:name/preview", "destination": "/api/count/:name/preview" },
     { "source": "/count/:name/raw", "destination": "/api/count/:name/raw" },
-    { "source": "/count/:name", "destination": "/api/count/:name" }
+    { "source": "/count/:name", "destination": "/api/count/:name" },
+    { "source": "/rank/:username", "destination": "/api/rank/:username" }
   ],
   "functions": {
     "api/**/*.js": {
