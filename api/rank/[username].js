@@ -1,11 +1,11 @@
 // api/rank/[username].js
-// GET /rank/USERNAME?mode=osu|taiko|catch|mania
+// GET /rank/USERNAME?mode=osu|taiko|catch|mania&size=small|medium|large
 // Looks up the player's global rank on osu! and returns it drawn
-// with the same character gifs as the view counter - no leading
-// zeros, just the real rank number.
+// with the RANK counter character set (different from the view
+// counter's) - no leading zeros, just the real rank number.
 
 const { getUserRank } = require("../../lib/osu");
-const { buildImageForNumber } = require("../../lib/digits");
+const { buildImageForNumber, SIZE_SCALES } = require("../../lib/digits");
 
 // osu! usernames can contain spaces and unicode characters, so this
 // is more permissive than the view counter's name validator - it
@@ -17,6 +17,10 @@ function isValidUsername(username) {
     username.length <= 32 &&
     !/[\/\\]/.test(username)
   );
+}
+
+function resolveSize(size) {
+  return SIZE_SCALES[size] ? size : "medium";
 }
 
 module.exports = async (req, res) => {
@@ -41,11 +45,13 @@ module.exports = async (req, res) => {
   // so the image always loads something instead of breaking.
   const rank = result.found && result.rank ? result.rank : 0;
 
-  const gifBuffer = await buildImageForNumber(rank, { pad: false });
+  const gifBuffer = await buildImageForNumber(rank, {
+    pad: false,
+    digitSet: "rank",
+    size: resolveSize(req.query.size),
+  });
 
   res.setHeader("Content-Type", "image/gif");
-  // Ranks don't change every second like a view counter, so a short
-  // cache is fine here and reduces load further.
   res.setHeader("Cache-Control", "public, max-age=3600");
   res.status(200).send(gifBuffer);
 };

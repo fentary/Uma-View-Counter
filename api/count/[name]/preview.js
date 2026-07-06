@@ -1,9 +1,13 @@
 // api/count/[name]/preview.js
-// GET /count/YOURNAME/preview
+// GET /count/YOURNAME/preview?size=small|medium|large
 // Shows the current number WITHOUT incrementing it. Useful for testing.
 
 const { redis } = require("../../../lib/redis");
-const { buildCounterImage, isValidName } = require("../../../lib/digits");
+const { buildCounterImage, isValidName, SIZE_SCALES } = require("../../../lib/digits");
+
+function resolveSize(size) {
+  return SIZE_SCALES[size] ? size : "medium";
+}
 
 module.exports = async (req, res) => {
   const { name } = req.query;
@@ -14,9 +18,9 @@ module.exports = async (req, res) => {
   }
 
   const current = (await redis.get(`counter:${name}`)) || 0;
-  const pngBuffer = await buildCounterImage(current);
+  const gifBuffer = await buildCounterImage(current, { size: resolveSize(req.query.size) });
 
   res.setHeader("Content-Type", "image/gif");
   res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate");
-  res.status(200).send(pngBuffer);
+  res.status(200).send(gifBuffer);
 };

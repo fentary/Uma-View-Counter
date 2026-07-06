@@ -253,6 +253,13 @@
       <button onclick="generate()">Generate</button>
     </div>
 
+    <label style="margin-top:16px;">Display size</label>
+    <div class="mode-row" id="viewSizeRow">
+      <button class="mode-btn" data-size="small">small</button>
+      <button class="mode-btn active" data-size="medium">medium</button>
+      <button class="mode-btn" data-size="large">large</button>
+    </div>
+
     <div class="preview" id="preview">
       <span class="placeholder">Your preview will show up here</span>
     </div>
@@ -315,6 +322,13 @@
       <button class="mode-btn" data-mode="mania">mania</button>
     </div>
 
+    <label style="margin-top:16px;">Display size</label>
+    <div class="mode-row" id="rankSizeRow">
+      <button class="mode-btn" data-size="small">small</button>
+      <button class="mode-btn active" data-size="medium">medium</button>
+      <button class="mode-btn" data-size="large">large</button>
+    </div>
+
     <div class="preview" id="rankPreview" style="margin-top:24px;">
       <span class="placeholder">Your preview will show up here</span>
     </div>
@@ -363,6 +377,15 @@
     return name.trim().replace(/[^a-zA-Z0-9_-]/g, "");
   }
 
+  let selectedViewSize = 'medium';
+  document.getElementById('viewSizeRow').addEventListener('click', (e) => {
+    const btn = e.target.closest('.mode-btn');
+    if (!btn) return;
+    document.querySelectorAll('#viewSizeRow .mode-btn').forEach((b) => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedViewSize = btn.dataset.size;
+  });
+
   async function generate() {
     const raw = document.getElementById("nameInput").value;
     const name = sanitize(raw);
@@ -376,10 +399,10 @@
     }
 
     const base = window.location.origin;
-    const finalUrl = `${base}/count/${name}`;
-    const previewUrl = `${base}/count/${name}/preview`;
+    const finalUrl = `${base}/count/${name}?size=${selectedViewSize}`;
+    const previewUrl = `${base}/count/${name}/preview?size=${selectedViewSize}`;
 
-    preview.innerHTML = `<img src="${previewUrl}?t=${Date.now()}" alt="preview">`;
+    preview.innerHTML = `<img src="${previewUrl}&t=${Date.now()}" alt="preview">`;
 
     document.getElementById("urlBox").textContent = finalUrl;
     document.getElementById("htmlBox").textContent = `<img src="${finalUrl}" alt="${name}" />`;
@@ -411,6 +434,15 @@
     return name.trim().replace(/[\/\\]/g, "");
   }
 
+  let selectedRankSize = 'medium';
+  document.getElementById('rankSizeRow').addEventListener('click', (e) => {
+    const btn = e.target.closest('.mode-btn');
+    if (!btn) return;
+    document.querySelectorAll('#rankSizeRow .mode-btn').forEach((b) => b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedRankSize = btn.dataset.size;
+  });
+
   async function generateRank() {
     const raw = document.getElementById("rankInput").value;
     const username = sanitizeUsername(raw);
@@ -424,7 +456,7 @@
     }
 
     const base = window.location.origin;
-    const finalUrl = `${base}/rank/${encodeURIComponent(username)}?mode=${selectedMode}`;
+    const finalUrl = `${base}/rank/${encodeURIComponent(username)}?mode=${selectedMode}&size=${selectedRankSize}`;
 
     preview.innerHTML = `<img src="${finalUrl}&t=${Date.now()}" alt="preview">`;
 
