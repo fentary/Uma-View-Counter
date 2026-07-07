@@ -1,5 +1,5 @@
 // api/count/[name].js
-// Main route: GET /count/YOURNAME?size=small|medium|large
+// Main route: GET /count/YOURNAME?size=small|medium
 // Increments the counter in Redis (this NEVER resets on its own) and
 // returns a gif image showing the number, using the VIEW counter
 // character set.

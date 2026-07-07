@@ -1,5 +1,5 @@
 // api/count/[name]/preview.js
-// GET /count/YOURNAME/preview?size=small|medium|large
+// GET /count/YOURNAME/preview?size=small|medium
 // Shows the current number WITHOUT incrementing it. Useful for testing.
 
 const { redis } = require("../../../lib/redis");

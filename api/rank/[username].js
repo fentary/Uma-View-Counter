@@ -1,5 +1,5 @@
 // api/rank/[username].js
-// GET /rank/USERNAME?mode=osu|taiko|catch|mania&size=small|medium|large
+// GET /rank/USERNAME?mode=osu|taiko|catch|mania&size=small|medium
 // Looks up the player's global rank on osu! and returns it drawn
 // with the RANK counter character set (different from the view
 // counter's) - no leading zeros, just the real rank number.

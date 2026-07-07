@@ -1,10 +1,10 @@
 // scripts/prerender-sizes.js
 //
-// Pre-generates the "small" and "large" versions of every digit gif,
-// for every digit set found under /digits. This runs ONCE (you run
-// it yourself, locally or as part of deploy), instead of resizing
-// frames on every single request - which is what was causing the
-// "large" size to sometimes time out and show a broken image.
+// Pre-generates the "small" version of every digit gif, for every
+// digit set found under /digits. This runs ONCE (you run it
+// yourself, whenever you add/replace a digit set), instead of
+// resizing frames on every single request - which is slow and can
+// time out.
 //
 // Usage: node scripts/prerender-sizes.js
 
@@ -13,7 +13,7 @@ const path = require("path");
 const sharp = require("sharp");
 
 const DIGITS_ROOT = path.join(__dirname, "..", "digits");
-const SCALES = { small: 0.6, large: 1.5 };
+const SCALES = { small: 0.6 };
 
 async function resizeGif(inputPath, outputPath, scale) {
   const buffer = fs.readFileSync(inputPath);
@@ -51,7 +51,7 @@ async function resizeGif(inputPath, outputPath, scale) {
 async function main() {
   const digitSets = fs.readdirSync(DIGITS_ROOT).filter((entry) => {
     const full = path.join(DIGITS_ROOT, entry);
-    return fs.statSync(full).isDirectory() && !["small", "large"].includes(entry);
+    return fs.statSync(full).isDirectory() && !["small"].includes(entry);
   });
 
   for (const digitSet of digitSets) {
