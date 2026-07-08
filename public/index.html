@@ -6,14 +6,14 @@
 <title>View Counter Generator</title>
 <style>
   :root {
-    --bg: #17141f;
-    --panel: #211c2e;
-    --panel-border: #34293f;
-    --text: #f1e9f7;
-    --muted: #a495b3;
-    --accent: #ff6fb0;
-    --accent-2: #6fd6ff;
-    --mono-bg: #120f1a;
+    --bg: #10190f;
+    --panel: #182618;
+    --panel-border: #2c3e2a;
+    --text: #eaf5e9;
+    --muted: #8ba18a;
+    --accent: #5ee861;
+    --accent-2: #cdeccb;
+    --mono-bg: #0c130b;
   }
 
   * { box-sizing: border-box; }
@@ -22,8 +22,8 @@
     margin: 0;
     background: var(--bg);
     background-image:
-      radial-gradient(circle at 15% 20%, rgba(255,111,176,0.08), transparent 40%),
-      radial-gradient(circle at 85% 80%, rgba(111,214,255,0.08), transparent 40%);
+      radial-gradient(circle at 15% 20%, rgba(94,232,97,0.07), transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(205,236,203,0.06), transparent 40%);
     color: var(--text);
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
     min-height: 100vh;
@@ -95,7 +95,7 @@
 
   button {
     background: var(--accent);
-    color: #1a0e14;
+    color: #0a1a0b;
     border: none;
     border-radius: 10px;
     padding: 12px 20px;
@@ -205,7 +205,7 @@
 
   .tab-btn.active {
     background: var(--accent);
-    color: #1a0e14;
+    color: #0a1a0b;
   }
 
   .panel { display: none; }
@@ -230,7 +230,27 @@
   .mode-btn.active {
     border-color: var(--accent);
     color: var(--accent);
-    background: rgba(255, 111, 176, 0.08);
+    background: rgba(94, 232, 97, 0.12);
+  }
+
+  .footer {
+    position: fixed;
+    right: 18px;
+    bottom: 14px;
+    text-align: right;
+    font-size: 11.5px;
+    line-height: 1.6;
+    color: #6b7d6a;
+  }
+
+  .footer a {
+    color: var(--accent);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .footer a:hover {
+    text-decoration: underline;
   }
 </style>
 </head>
@@ -249,7 +269,7 @@
 
     <label for="nameInput">Counter name</label>
     <div class="input-row">
-      <input type="text" id="nameInput" placeholder="e.g. my-profile" maxlength="64">
+      <input type="text" id="nameInput" placeholder="Example: my-profile" maxlength="64">
       <button onclick="generate()">Generate</button>
     </div>
 
@@ -309,7 +329,7 @@
 
     <label for="rankInput">osu! username</label>
     <div class="input-row">
-      <input type="text" id="rankInput" placeholder="e.g. fentary" maxlength="32">
+      <input type="text" id="rankInput" placeholder="Example: mrekk" maxlength="32">
       <button onclick="generateRank()">Generate</button>
     </div>
 
@@ -361,6 +381,11 @@
       Ranks are refreshed at most once every few hours (not on every single view) - this keeps things fast and avoids overloading the osu! API. If a player has no rank yet in the chosen mode (or doesn't exist), it'll show <code>0</code>.
     </div>
   </div>
+</div>
+
+<div class="footer">
+  By <a href="https://osu.ppy.sh/users/37966508" target="_blank" rel="noopener">fentary</a><br>
+  With <a href="https://osu.ppy.sh/docs/index.html" target="_blank" rel="noopener">osu! API</a> &amp; <a href="https://claude.ai" target="_blank" rel="noopener">claude.ai</a>
 </div>
 
 <script>
